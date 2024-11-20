@@ -62,6 +62,7 @@ try{
         <div class="row">
             <div class="col-md-2">Some links</div>
             <div class="col-md-10">
+                <a href="insertbook.php">Add New Book</a>
                 <table class="table table-striped table-danger">
                     <thead>
                         <tr>
