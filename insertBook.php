@@ -4,9 +4,32 @@
         $sql = "select * from category";
         $stmt = $conn->query($sql);
         $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // print_r($categories);
+        
+        $sql = "select * from publisher";
+        $stmt = $conn->query($sql);
+        $publisher = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = "select * from author";
+        $stmt = $conn->query($sql);
+        $author= $stmt->fetchAll(PDO::FETCH_ASSOC);
     }catch(PDOException $e){  
         echo $e->getMessage();
+    }
+
+    if (isset($_POST['insert'])) {
+        $title = $_POST['title'];
+        $categories = $_POST['category'];
+        $price = $_POST['price'];
+        $quantity = $_POST['quantity'];
+        $author = $_POST['author'];
+        $publisher = $_POST['publisher'];
+        $year = $_POST['year'];
+
+        $file_name = $_FILES['cover']['name'];
+        // $tempname = $_FILES['cover']['tmp_name'];
+        $folder = "covers/". $file_name;
+        move_uploaded_file($_FILES['cover']['tmp_name'], $folder);
+
     }
 ?>
 
@@ -61,7 +84,7 @@
             <div class="col-md-2">Some links</div>
             <div class="col-md-10">
                 <a href="insertbook.php">Add New Book</a>
-                <form>
+                <form method="POST" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']?>">
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" name="title">
@@ -74,17 +97,51 @@
                         <label for="quantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" name="quantity">
                     </div>
-                    <select class="form-select" name="category">
-                        <option selected>Open this select menu</option>
-                        <?php
-                        if(isset($categories)){
-                            foreach($categories as $category){
-                            echo "<option value=$category[category_id]>$category[category_name]</option>";
+                    <div>
+                        <select class="form-select" name="category">
+                            <option selected>Open this select menu</option>
+                            <?php
+                            if(isset($categories)){
+                                foreach($categories as $category){
+                                echo "<option value=$category[category_id]>$category[category_name]</option>";
+                                }
                             }
-                        }
-                        ?>
-                    </select>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <select class="form-select" name="publisher" id="publisher">
+                            <option disable selected>Select Publisher</option>
+                            <?php
+                            if(isset($publisher)){
+                                foreach($publisher as $publishers){
+                                echo "<option value=$publishers[publisher_id]>$publishers[publisher_name]</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <select class="form-select" name="author" id="author">
+                            <option disable selected>Select author</option>
+                            <?php
+                            if(isset($author)){
+                                foreach($author as $authors){
+                                echo "<option value=$authors[author_id]>$authors[author_name]</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="number" name="year" id="year" placeholder="" required/>
+                        <label for="year">Year</label>
+                    </div>
+                    <div>
+                        <input type="file" name="cover" id="cover" placeholder="" required/>
+                        <label for="cover">Book Cover</label>
+                    </div>
+                    <button type="submit" name="insert" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
