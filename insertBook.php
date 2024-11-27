@@ -27,10 +27,26 @@
 
         $file_name = $_FILES['cover']['name'];
         // $tempname = $_FILES['cover']['tmp_name'];
-        $folder = "covers/". $file_name;
-        move_uploaded_file($_FILES['cover']['tmp_name'], $folder);
+        $uploadPath = "covers/". $file_name;
+        move_uploaded_file($_FILES['cover']['tmp_name'], $uploadPath);
+
+        try{
+            $sql = "INSERT INTO book (title, author, price, publisher, year, category, coverpath, quantity) VALUES (?,?,?,?,?,?,?,?)";
+            $stmt = $conn->prepare($sql);
+            $status = $stmt->execute([$title, $author, $price,  $publisher,  $year,  $categories,  $uploadPath, $quantity]);
+    
+            if($status){
+                // header("Location: viewBook.php")
+                echo "Insert Success!";
+            }
+    
+        }catch(PDOException){
+            echo $e->getMessage();  
+        }
 
     }
+
+    
 ?>
 
 <!doctype html>
@@ -97,7 +113,7 @@
                         <label for="quantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" name="quantity">
                     </div>
-                    <div>
+                    <div class="mb-2">
                         <select class="form-select" name="category">
                             <option selected>Open this select menu</option>
                             <?php
