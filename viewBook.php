@@ -65,9 +65,16 @@
     </nav>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2">Some links</div>
+            <div class="col-md-2">
+                <a class="nav-link"  href="viewBook.php">View Books</a>
+                <a class="nav-link" href="viewAuthor.php">View Authors</a>
+                <a class="nav-link" href="viewPublisher.php">View Publisher</a>
+                <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </div>
             <div class="col-md-10">
-                <a href="insertbook.php">Add New Book</a>
+                <div class="pb-5">
+                    <a href="insertbook.php">Add New Book</a>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -98,6 +105,8 @@
                                         <td>
                                             <img src='$book[coverpath]' style='width: 50px; height: 80px;'>
                                         </td>
+                                        <td><a href='editbook.php' class='btn btn-info'>Edit </a></td>
+                                        <td><a href='deletebook.php' class='btn btn-danger'>Delete </a></td>
                                     </tr>";
                                 }
                             }

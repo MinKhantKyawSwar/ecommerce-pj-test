@@ -97,66 +97,88 @@
     </nav>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2">Some links</div>
+            <div class="col-md-2">
+                <div class="navbar-nav ps-3">
+                    <a class="nav-link"  href="viewBook.php">View Books</a>
+                    <a class="nav-link" href="viewAuthor.php">View Authors</a>
+                    <a class="nav-link" href="viewPublisher.php">View Publisher</a>
+                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </div>
+            </div>
             <div class="col-md-10">
-                <a href="insertbook.php">Add New Book</a>
+                <a href="insertbook.php" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Add New Book</a>
                 <form method="POST" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']?>">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title</label>
-                        <input type="text" class="form-control" name="title">
+                    <div class="row">
+                        <div class="mb-3 col-lg-4">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title">
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" name="price">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Price</label>
-                        <input type="number" class="form-control" name="price">
-                    </div>
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity">
-                    </div>
-                    <div class="mb-2">
-                        <select class="form-select" name="category">
-                            <option selected>Open this select menu</option>
-                            <?php
-                            if(isset($categories)){
-                                foreach($categories as $category){
-                                echo "<option value=$category[category_id]>$category[category_name]</option>";
+
+                    <div class="row">
+                        <div class="mb-3 col-lg-4">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" name="quantity">
+                        </div>
+                        <div class="mb-2 col-lg-4">
+                            <label for="Category" class="form-label">Category</label>
+                            <select class="form-select" name="category">
+                                <option selected>Open this select menu</option>
+                                <?php
+                                if(isset($categories)){
+                                    foreach($categories as $category){
+                                    echo "<option value=$category[category_id]>$category[category_name]</option>";
+                                    }
                                 }
-                            }
-                            ?>
-                        </select>
+                                ?>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <select class="form-select" name="publisher" id="publisher">
-                            <option disable selected>Select Publisher</option>
-                            <?php
-                            if(isset($publisher)){
-                                foreach($publisher as $publishers){
-                                echo "<option value=$publishers[publisher_id]>$publishers[publisher_name]</option>";
+                    
+                    <div class="row">
+                        <div  class="mb-3 col-lg-4">
+                            <label for="Publisher" class="form-label">Publisher</label>
+                            <select class="form-select" name="publisher" id="publisher">
+                                <option disable selected>Select Publisher</option>
+                                <?php
+                                if(isset($publisher)){
+                                    foreach($publisher as $publishers){
+                                    echo "<option value=$publishers[publisher_id]>$publishers[publisher_name]</option>";
+                                    }
                                 }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div>
-                        <select class="form-select" name="author" id="author">
-                            <option disable selected>Select author</option>
-                            <?php
-                            if(isset($author)){
-                                foreach($author as $authors){
-                                echo "<option value=$authors[author_id]>$authors[author_name]</option>";
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="Author" class="form-label">Author</label>
+                            <select class="form-select" name="author" id="author">
+                                <option disable selected>Select author</option>
+                                <?php
+                                if(isset($author)){
+                                    foreach($author as $authors){
+                                    echo "<option value=$authors[author_id]>$authors[author_name]</option>";
+                                    }
                                 }
-                            }
-                            ?>
-                        </select>
+                                ?>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <input type="number" name="year" id="year" placeholder="" required/>
-                        <label for="year">Year</label>
-                    </div>
-                    <div>
-                        <input type="file" name="cover" id="cover" placeholder="" required/>
-                        <label for="cover">Book Cover</label>
-                    </div>
+                   
+                    
+                   <div class="row">
+                        <div  class="mb-3 col-lg-4">
+                            <input type="number" name="year" id="year" placeholder="" required/>
+                            <label for="year">Year</label>
+                        </div>
+                        <div  class="mb-3 col-lg-4">
+                            <input type="file" name="cover" id="cover" placeholder="" required/>
+                            <label for="cover">Book Cover</label>
+                        </div>
+                   </div>
                     <button type="submit" name="insert" class="btn btn-primary">Submit</button>
                 </form>
             </div>
