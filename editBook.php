@@ -16,36 +16,29 @@
         echo $e->getMessage();
     }
 
-    if (isset($_POST['insert'])) {
-        $title = $_POST['title'];
-        $categories = $_POST['category'];
-        $price = $_POST['price'];
-        $quantity = $_POST['quantity'];
-        $author = $_POST['author'];
-        $publisher = $_POST['publisher'];
-        $year = $_POST['year'];
-
-        $file_name = $_FILES['cover']['name'];
-        // $tempname = $_FILES['cover']['tmp_name'];
-        $uploadPath = "covers/". $file_name;
-        move_uploaded_file($_FILES['cover']['tmp_name'], $uploadPath);
-
-        try{
-            $sql = "INSERT INTO book (title, author, price, publisher, year, category, coverpath, quantity) VALUES (?,?,?,?,?,?,?,?)";
-            $stmt = $conn->prepare($sql);
-            $status = $stmt->execute([$title, $author, $price,  $publisher,  $year,  $categories,  $uploadPath, $quantity]);
-    
-            if($status){
-                header("Location: viewBook.php");
-                // echo "Insert Success!";
-            }
-    
-        }catch(PDOException){
-            echo "Error Occurs";  
-        }
-
+    if (isset($_GET['bid'])) {
+        $bookid = $_GET['bid'];
+        $book = getBookInfo($bookid);
+       
+        
     }
 
+    function getBookInfo($bid){
+        GLOBAL $conn;
+        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
+        FROM book b, category c, author a, publisher p
+        WHERE
+        b.category = c.category_id AND
+        b.author = a.author_id AND
+        b.publisher = p.publisher_id AND
+        b.bookid = ?";
+        $stmt=$conn->prepare($sql);
+        $stmt->execute([$bid]);
+
+        $book = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $book;
+    }
     
 ?>
 
@@ -105,28 +98,36 @@
                     <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                 </div>
             </div>
-            <div class="col-md-10   ">
+            <div class="col-md-10">
                 <a href="insertbook.php" class="text-decoration-none bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Add New Book</a>
                 <form method="POST" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']?>">
                     <div class="row">
                         <div class="mb-3 col-lg-4">
                             <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" name="title">
+                            <input type="text" class="form-control" name="title" value="<?php 
+                                                                                            if(isset($book['title'])){
+                                                                                                echo $book['title']; }?>">
                         </div>
                         <div class="mb-3 col-lg-4">
                             <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" name="price">
+                            <input type="number" class="form-control" name="price" value="<?php 
+                                                                                            if(isset($book['price'])){
+                                                                                                echo $book['price']; }?>">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="mb-3 col-lg-4">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" name="quantity">
+                            <input type="number" class="form-control" name="quantity" value="<?php 
+                                                                                            if(isset($book['quantity'])){
+                                                                                                echo $book['quantity']; }?>">
                         </div>
                         <div class="mb-2 col-lg-4">
                             <label for="Category" class="form-label">Category</label>
+                            <?php echo '</br> You have chosen: "' . $book['category'] . '"'?>
                             <select class="form-select" name="category">
+                           
                                 <option selected>Open this select menu</option>
                                 <?php
                                 if(isset($categories)){
@@ -142,6 +143,7 @@
                     <div class="row">
                         <div  class="mb-3 col-lg-4">
                             <label for="Publisher" class="form-label">Publisher</label>
+                            <?php echo '</br> You have chosen: "' . $book['publisher'] . '"'?>
                             <select class="form-select" name="publisher" id="publisher">
                                 <option disable selected>Select Publisher</option>
                                 <?php
@@ -155,6 +157,7 @@
                         </div>
                         <div class="mb-3 col-lg-4">
                             <label for="Author" class="form-label">Author</label>
+                            <?php echo '</br> You have chosen: "' . $book['author'] . '"'?>
                             <select class="form-select" name="author" id="author">
                                 <option disable selected>Select author</option>
                                 <?php
@@ -171,10 +174,14 @@
                     
                    <div class="row">
                         <div  class="mb-3 col-lg-4">
-                            <input type="number" name="year" id="year" placeholder="" required/>
+                            <input type="number" name="year" id="year"value="<?php
+                                                                                    if(isset($book['year'])){
+                                                                                    echo $book['year']; }?>" placeholder="" required/>
                             <label for="year">Year</label>
                         </div>
                         <div  class="mb-3 col-lg-4">
+                            <p>Previous Image</p>
+                            <img src="<?php $book['bookcover']?>">
                             <input type="file" name="cover" id="cover" placeholder="" required/>
                             <label for="cover">Book Cover</label>
                         </div>

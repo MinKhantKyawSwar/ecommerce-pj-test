@@ -73,7 +73,7 @@
             </div>
             <div class="col-md-10">
                 <div class="pb-5">
-                    <a href="insertbook.php">Add New Book</a>
+                    <a href="insertbook.php" class="text-decoration-none bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Add New Book</a>
                 </div>
                 <table class="table table-striped">
                     <thead>
@@ -105,8 +105,8 @@
                                         <td>
                                             <img src='$book[coverpath]' style='width: 50px; height: 80px;'>
                                         </td>
-                                        <td><a href='editbook.php' class='btn btn-info'>Edit </a></td>
-                                        <td><a href='deletebook.php' class='btn btn-danger'>Delete </a></td>
+                                        <td><a href='editbook.php?bid=$book[bookid]' class='btn btn-info'>Edit </a></td>
+                                        <td><a href='deletebook.php?bid=$book[bookid]' class='btn btn-danger'>Delete </a></td>
                                     </tr>";
                                 }
                             }
