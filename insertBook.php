@@ -1,5 +1,10 @@
 <?php
     require_once "dbconnect.php";
+
+    if(!isset($_SESSION)){
+        session_start();
+    }
+
     try{
         $sql = "select * from category";
         $stmt = $conn->query($sql);
@@ -35,9 +40,10 @@
             $stmt = $conn->prepare($sql);
             $status = $stmt->execute([$title, $author, $price,  $publisher,  $year,  $categories,  $uploadPath, $quantity]);
     
+            $book_id = $conn ->lastInsertId();
             if($status){
+                $_SESSION['insertSuccess'] = "Book with book id $bookid has been inserted!";
                 header("Location: viewBook.php");
-                // echo "Insert Success!";
             }
     
         }catch(PDOException){

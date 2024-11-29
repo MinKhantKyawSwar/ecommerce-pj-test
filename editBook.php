@@ -1,5 +1,9 @@
 <?php
     require_once "dbconnect.php";
+    if(!isset($_SESSION)){
+        session_start();
+    }
+
     try{
         $sql = "select * from category";
         $stmt = $conn->query($sql);
@@ -20,7 +24,6 @@
         $bookid = $_GET['bid'];
         $book = getBookInfo($bookid);
        
-        
     }
 
     function getBookInfo($bid){
@@ -40,6 +43,24 @@
         return $book;
     }
     
+    if (isset($_POST['update'])){
+        $book_id = $_POST['bookid'];
+        // SQL statement
+        $sql = "Update book set title = ?, price=?, year=?,category =?, publisher=?, author = ?, quantity =?, coverpath=? where bookid = ?";
+        $title = $_POST['title'];
+        $categories = $_POST['category'];
+        $price = $_POST['price'];
+        $quantity = $_POST['quantity'];
+        $author = $_POST['author'];
+        $publisher = $_POST['publisher'];
+        $year = $_POST['year'];
+
+        $file_name = $_FILES['cover']['name'];
+        // $tempname = $_FILES['cover']['tmp_name'];
+        $uploadPath = "covers/". $file_name;
+        move_uploaded_file($_FILES['cover']['tmp_name'], $uploadPath);
+
+    }
 ?>
 
 <!doctype html>
@@ -101,6 +122,7 @@
             <div class="col-md-10">
                 <a href="insertbook.php" class="text-decoration-none bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Add New Book</a>
                 <form method="POST" enctype="multipart/form-data" action="<?php $_SERVER['PHP_SELF']?>">
+                    <input type="hidden" name="bookid" value ="$book['book_id']">
                     <div class="row">
                         <div class="mb-3 col-lg-4">
                             <label for="title" class="form-label">Title</label>
@@ -181,12 +203,15 @@
                         </div>
                         <div  class="mb-3 col-lg-4">
                             <p>Previous Image</p>
-                            <img src="<?php $book['bookcover']?>">
+                            <img src="<?php 
+                                        if(isset($book['coverpath'])){
+                                        
+                                        echo $book['coverpath']; }?>">
                             <input type="file" name="cover" id="cover" placeholder="" required/>
                             <label for="cover">Book Cover</label>
                         </div>
                    </div>
-                    <button type="submit" name="insert" class="btn btn-primary">Submit</button>
+                    <button type="submit" name="update" class="btn btn-primary">Update</button>
                 </form>
             </div>
         </div>

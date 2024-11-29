@@ -1,22 +1,16 @@
 <?php
     require_once("dbconnect.php");
-
     if(!isset($_SESSION)){
         session_start();
     }
 
-    $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
-            FROM book b, category c, author a, publisher p
-            WHERE
-            b.category = c.category_id AND
-            b.author = a.author_id AND
-            b.publisher = p.publisher_id;";
+    $sql = "SELECT * FROM author";
     try{
         $stmt = $conn->query($sql);
         $status = $stmt->execute();
         if ($status) {
-            $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            // print_r($rows);
+            $authors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // print_r($authors);
         }
         else {
         }
@@ -78,54 +72,31 @@
             </div>
             <div class="col-md-10">
                 <div class="pb-5">
-                    <a href="insertbook.php" class="text-decoration-none bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Add New Book</a>
+                    <a href="insertAuthor.php" class="text-decoration-none bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                        Add New Author</a>
                 </div>
-                <p>
-                    <?php
-                        if(isset($_SESSION['deleteSuccess'])){
-                            echo "<span class='alert alert-success'>$_SESSION[deleteSuccess]</span>";
-                            unset($_SESSION['deleteSuccess']);
-                        }
-
-                        if(isset($_SESSION['insertSuccess'])){
-                            echo "<span class='alert alert-success'>$_SESSION[insertSuccess]</span>";
-                            unset($_SESSION['insertSuccess']);
-                        }
-                    ?>
-                </p>
-
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Book_id</th>
-                            <th>Title</th>
-                            <th>Price</th>
-                            <th>Year</th>
-                            <th>Author</th>
-                            <th>Publisher</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Coverpath</th>
+                            <th>Author_id</th>
+                            <th>Author_Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>City</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                            if(isset($books)){
-                                foreach($books as $book){
+                            if(isset($authors)){
+                                foreach($authors as $author){
                                     echo "<tr>
-                                        <td>$book[bookid]</td>
-                                        <td>$book[title]</td>
-                                        <td>$book[price]</td>
-                                        <td>$book[year]</td>
-                                        <td>$book[author]</td>
-                                        <td>$book[publisher]</td>
-                                        <td>$book[category]</td>
-                                        <td>$book[quantity]</td>
-                                        <td>
-                                            <img src='$book[coverpath]' style='width: 50px; height: 80px;'>
-                                        </td>
-                                        <td><a href='editbook.php?bid=$book[bookid]' class='btn btn-info'>Edit </a></td>
-                                        <td><a href='deletebook.php?bid=$book[bookid]' class='btn btn-danger'>Delete </a></td>
+                                        <td>$author[author_id]</td>
+                                        <td>$author[author_name]</td>
+                                        <td>$author[email]</td>
+                                        <td>$author[address]</td>
+                                        <td>$author[city]</td>
+                                        <td><a href='editAuthor.php?bid=$author[author_id]' class='btn btn-info'>Edit </a></td>
+                                        <td><a href='deleteAuthor.php?bid=$author[author_id]' class='btn btn-danger'>Delete </a></td>
                                     </tr>";
                                 }
                             }
