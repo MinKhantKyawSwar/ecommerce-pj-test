@@ -91,6 +91,11 @@
                             echo "<span class='alert alert-success'>$_SESSION[insertSuccess]</span>";
                             unset($_SESSION['insertSuccess']);
                         }
+
+                        if(isset($_SESSION['updateBookSuccess'])){
+                            echo "<span class='alert alert-success'>$_SESSION[updateBookSuccess]</span>";
+                            unset($_SESSION['updateBookSuccess']);
+                        }
                     ?>
                 </p>
 
