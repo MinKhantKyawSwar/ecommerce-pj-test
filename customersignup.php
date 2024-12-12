@@ -162,6 +162,13 @@ if (isset($_POST['signup']) && $_SERVER['REQUEST_METHOD'] == "POST") {
                         </div>
                     </div>
                     <button type="submit" name="signup" class="btn btn-primary text-sm">Signup</button>
+                    <p>
+                    If you are already a member, you can
+                    <a href="customerLogin.php">
+                        Login
+                    </a>
+                    here
+                </p>
                 </form>
             </div>
         </div>
