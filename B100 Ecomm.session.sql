@@ -10,3 +10,7 @@
 
 -- alter table customer2
 -- add column (profile varchar(70))
+
+create table admin
+(email VARCHAR(60) UNIQUE, 
+password VARCHAR(60));
