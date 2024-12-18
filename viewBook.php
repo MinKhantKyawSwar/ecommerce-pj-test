@@ -22,6 +22,84 @@ try {
 } catch (PDOException $e) {
     echo $e->getMessage();
 }
+
+try {
+    $sql = "select * from category";
+    $stmt = $conn->query($sql);
+    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $sql = "select * from publisher";
+    $stmt = $conn->query($sql);
+    $publisher = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $sql = "select * from author";
+    $stmt = $conn->query($sql);
+    $author = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo $e->getMessage();
+}
+
+if (isset($_POST['ctySearch'])) {
+    //selected id from user
+    $id = $_POST['catgy'];
+    try {
+        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
+        FROM book b, category c, author a, publisher p
+        WHERE
+        b.category = c.category_id AND
+        b.author = a.author_id AND
+        b.publisher = p.publisher_id AND
+        c.category_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id]);
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+if (isset($_POST['auSearch'])) {
+    //selected id from user
+    $id = $_POST['author'];
+
+    try {
+        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
+        FROM book b, category c, author a, publisher p
+        WHERE
+        b.category = c.category_id AND
+        b.author = a.author_id AND
+        b.publisher = p.publisher_id AND
+        a.author_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id]);
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+if (isset($_POST['pubSearch'])) {
+    //selected id from user
+    $id = $_POST['publisher'];
+    
+    try {
+        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
+        FROM book b, category c, author a, publisher p
+        WHERE
+        b.category = c.category_id AND
+        b.author = a.author_id AND
+        b.publisher = p.publisher_id AND
+        p.publisher_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id]);
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -86,7 +164,41 @@ try {
                     <a class="nav-link" href="viewBook.php">View Books</a>
                     <a class="nav-link" href="viewAuthor.php">View Authors</a>
                     <a class="nav-link" href="viewPublisher.php">View Publisher</a>
-                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                        <p class="text-primary">Category</p>
+                        <select name="catgy" class="mt-3 form-select">
+                            <?php
+                            foreach ($categories as $category) {
+                                echo "<option value='" . $category['category_id'] . "'>" . $category['category_name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary mt-4" name="ctySearch"> Search </button>
+                    </form>
+
+                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                        <p class="text-primary">Author</p>
+                        <select name="author" class="mt-3 form-select">
+                            <?php
+                            foreach ($author as $au) {
+                                echo "<option value='" . $au['author_id'] . "'>" . $au['author_name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary mt-4" name="auSearch"> Search </button>
+                    </form>
+
+                    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                        <p class="text-primary">publisher</p>
+                        <select name="publisher" class="mt-3 form-select">
+                            <?php
+                            foreach ($publisher as $pu) {
+                                echo "<option value='" . $pu['publisher_id'] . "'>" . $pu['publisher_name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary mt-4" name="pubSearch"> Search </button>
+                    </form>
                 <?php
                 }
                 ?>
