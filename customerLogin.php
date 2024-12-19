@@ -18,8 +18,10 @@ if (isset($_POST['login']) && $_SERVER['REQUEST_METHOD'] == "POST") {
             if ($info) {
                 $password_hash = $info["password"];
                 if (password_verify($password, $password_hash)) {
-                    $_SESSION['loginSuccess'] = "";
-                    header("Location: viewBook.php");
+                    $_SESSION['cloginSuccess'] = "Login Success";
+                    $_SESSION['cemail'] = $email;
+                    $_SESSION['is_logged_in'] = true;
+                    header("Location: viewCustomerBook.php");
                 } else {
                     $password_err = "Email or password does not exist";
                 }
