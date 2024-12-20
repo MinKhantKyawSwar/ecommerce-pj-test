@@ -56,7 +56,7 @@ if (isset($_POST['update'])) {
     // Handle file upload
     $file_name = $_FILES['cover']['name'];
     // $tempname = $_FILES['cover']['tmp_name'];
-    $uploadPath = "covers/" . $file_name;
+    $uploadPath = "../covers/" . $file_name;
     move_uploaded_file($_FILES['cover']['tmp_name'], $uploadPath);
 
 

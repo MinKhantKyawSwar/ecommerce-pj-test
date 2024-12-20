@@ -192,13 +192,23 @@ if (isset($_POST['rSearch'])) {
                         unset($_SESSION['cLoginSuccess']);
                     } // if ends
 
-                    if(isset($books)){
-                        foreach($books as $book){
-                    ?>
-                    <div class="card mb-3"></div>
-                    <?php
+                    if (isset($books)) {
+                        echo "<div class='row'>";
+                        foreach ($books as $book) {
+                            echo "<div class='col-lg-2 col-md-6 col-sm-12 mb-4'>
+                                    <div class='card h-100'>
+                                        <img src='{$book['coverpath']}' class='card-img-top' alt='{$book['title']}'>
+                                        <div class='card-body'>
+                                            <h5 class='card-title'>{$book['title']}</h5>
+                                            <p class='card-text'><strong>Price:</strong> {$book['price']}</p>
+                                            <p class='card-text'><strong>Author:</strong> {$book['author']}</p>
+                                        </div>
+                                    </div>
+                                </div>";
                         }
+                        echo "</div>";
                     }
+                    echo "</div>";
                     ?>
                 </p>
             

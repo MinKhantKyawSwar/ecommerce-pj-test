@@ -48,7 +48,7 @@ if (isset($_POST['signup']) && $_SERVER['REQUEST_METHOD'] == "POST") {
 
     $file_name = $_FILES['profile']['name'];
     // $tempname = $_FILES['cover']['tmp_name'];
-    $uploadPath = "profile/" . $file_name;
+    $uploadPath = "../profile/" . $file_name;
 
     if ($password == $cpassword) {
         if (ispasswordstrong($password)) {
