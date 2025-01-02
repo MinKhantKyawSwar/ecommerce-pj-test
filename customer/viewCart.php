@@ -1,130 +1,19 @@
 <?php
-require_once("dbconnect.php");
-
+require_once "dbconnect.php";
 if (!isset($_SESSION)) {
     session_start();
 }
 
-$sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
-            FROM book b, category c, author a, publisher p
-            WHERE
-            b.category = c.category_id AND
-            b.author = a.author_id AND
-            b.publisher = p.publisher_id;";
-try {
-    $stmt = $conn->query($sql);
-    $status = $stmt->execute();
-    if ($status) {
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // print_r($rows);
-    } else {
-    }
-} catch (PDOException $e) {
-    echo $e->getMessage();
-}
-
-try {
-    $sql = "select * from category";
-    $stmt = $conn->query($sql);
-    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $sql = "select * from publisher";
-    $stmt = $conn->query($sql);
-    $publisher = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $sql = "select * from author";
-    $stmt = $conn->query($sql);
-    $author = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo $e->getMessage();
-}
-
-if (isset($_POST['ctySearch'])) {
-    //selected id from user
-    $id = $_POST['catgy'];
-    try {
-        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
-        FROM book b, category c, author a, publisher p
-        WHERE
-        b.category = c.category_id AND
-        b.author = a.author_id AND
-        b.publisher = p.publisher_id AND
-        c.category_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$id]);
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-    }
-}
-
-if (isset($_POST['auSearch'])) {
-    //selected id from user
-    $id = $_POST['author'];
-
-    try {
-        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
-        FROM book b, category c, author a, publisher p
-        WHERE
-        b.category = c.category_id AND
-        b.author = a.author_id AND
-        b.publisher = p.publisher_id AND
-        a.author_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$id]);
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-    }
-}
-
-if (isset($_POST['pubSearch'])) {
-    //selected id from user
-    $id = $_POST['publisher'];
-
-    try {
-        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
-        FROM book b, category c, author a, publisher p
-        WHERE
-        b.category = c.category_id AND
-        b.author = a.author_id AND
-        b.publisher = p.publisher_id AND
-        p.publisher_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$id]);
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-    }
-    //publisher select ends
-}
-
-if (isset($_POST['rSearch'])) {
-    $priceRange = $_POST['priceRange'];
-    try {
-        $sql = "SELECT b.bookid, b.title, a.author_name as author, b.price, p.publisher_name as publisher, b.year, c.category_name as category,b.coverpath, b.quantity
-        FROM book b, category c, author a, publisher p
-        WHERE
-        b.category = c.category_id AND
-        b.author = a.author_id AND
-        b.publisher = p.publisher_id AND
-        b.price between ? and ?";
-        $stmt = $conn->prepare($sql);
-
-        if ($priceRange == 'third') {
-
-            $stmt->execute([50, 100]);
-        } elseif ($priceRange == 'second') {
-            $stmt->execute([101, 150]);
-        } else {
-            $stmt->execute([151, 200]);
-        }
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-    }
+if (isset($_SESSION["cart"]) && count($_SESSION["cart"]) > 0) {
+    $cart = $_SESSION['cart'];
+    $placeholders = implode(',', array_fill(0, count($cart), '?'));
+    $sql = "SELECT * FROM book WHERE bookid IN ($placeholders)";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($cart);
+    $books = $stmt->fetchAll();
 }
 ?>
+
 <!doctype html>
 <html lang="en">
 
@@ -162,6 +51,7 @@ if (isset($_POST['rSearch'])) {
                         if (isset($_SESSION['is_logged_in'])) {
                         ?>
                             <a href="clogout.php">Logout</a>
+
                             <div><?php echo $_SESSION['cemail'] ?></div>
                         <?php
                             if (isset($_SESSION['cart'])) {
@@ -169,7 +59,7 @@ if (isset($_POST['rSearch'])) {
                             }
                         } ?>
                     </li>
-                    
+
                 </ul>
             </div>
         </div>
@@ -242,33 +132,30 @@ if (isset($_POST['rSearch'])) {
                         unset($_SESSION['cLoginSuccess']);
                     } // if ends
 
-                    if (isset($books)) {
-                        echo "<div class='row'>";
-                        foreach ($books as $book) {
-                            echo "<div class='col-lg-2 col-md-6 col-sm-12 mb-4'>
-                                    <div class='card h-100'>
-                                        <img src='{$book['coverpath']}' class='card-img-top' alt='{$book['title']}'>
-                                        <div class='card-body'>
-                                            <h5 class='card-title'>{$book['title']}</h5>
-                                            <p class='card-text'><strong>Price:</strong> {$book['price']}</p>
-                                            <p class='card-text'><strong>Author:</strong> {$book['author']}</p>
-                                           <a href=addCart.php?id=$book[bookid]>Add to Cart</a>
-                                        </div>
-                                    </div>
-                                </div>";
+                    if (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
+                        $cart = $_SESSION['cart'];
+                        foreach ($cart as $id) {
+                            echo "$id<br>";
                         }
-                        echo "</div>";
                     }
+
                     echo "</div>";
                     ?>
                 </p>
-
-
+            </div>
+            <div class="col-md-10">
+                <?php if (!empty($books)) : ?>
+                    <h3>Books in Your Cart</h3>
+                    <ul>
+                        <?php foreach ($books as $book) : ?>
+                            <li><?php echo htmlspecialchars($book['title']); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>
